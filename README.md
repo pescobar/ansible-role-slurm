@@ -1,7 +1,7 @@
 ansible-role-slurm
 =========
 
-** this is still a work in progress **
+**this is still a work in progress**
 
 Install slurm from OpenHPC repositories
 
