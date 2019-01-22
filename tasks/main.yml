@@ -1,0 +1,84 @@
+---
+# tasks file for ansible-role-slurm
+
+- name: Add OpenHPC repositories
+  yum:
+    name: "{{ slurm_ohpc_repos_url }}"
+    state: installed
+  when: slurm_add_ohpc_repos
+
+
+- name: Install main slurm packages from OHPC repos
+  block:
+
+    - name: install slurm-ohpc from OHPC (slurm user is created)
+      yum:
+        name: slurm-ohpc
+        state: installed
+
+    - name: install slurm-example-configs-ohpc from OHPC. (/etc/slurm is created)
+      yum:
+        name: slurm-example-configs-ohpc
+        state: installed
+
+    - name: install munge-ohpc rpm from OPHC
+      yum:
+        name: munge-ohpc
+        state: installed
+
+  when: slurm_use_ohpc_rpms
+
+- name: Install main slurm packages from internal yum repo (NOT OHPC)
+  block:
+
+    - name: install slurm rpm if we are NOT using OHPC packages (slurm user is created)
+      yum:
+        name: slurm
+        state: installed
+
+    - name: install slurm-example-configs NOT OPHC. (/etc/slurm is created)
+      yum:
+        name: slurm-example-configs
+        state: installed
+
+    - name: install munge
+      yum:
+        name: munge
+        state: installed
+
+  when: not slurm_use_ohpc_rpms
+
+- name: Create folder /var/log/slurm
+  file:
+    path: /var/log/slurm
+    state: directory
+    owner: slurm
+    group: slurm
+    mode: 0755
+
+- name: Install slurm accounting daemon if slurm_accounting_host is true
+  import_tasks: slurm_accounting.yml
+  when: slurm_accounting_host | bool
+
+- name: Enable and start munge service
+  service:
+    name: munge
+    state: started
+    enabled: true
+
+- name: deploy /etc/slurm/slurm.conf
+  template:
+    dest: /etc/slurm/slurm.conf
+    src: etc/slurm/slurm.conf.j2
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart_slurm_daemons
+
+- name: Install slurm master daemon if slurm_master_host is true
+  import_tasks: slurm_master.yml
+  when: slurm_master_host | bool
+
+- name: Install slurm worker daemon if slurm_worker_host is true
+  import_tasks: slurm_worker.yml
+  when: slurm_worker_host | bool

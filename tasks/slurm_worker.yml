@@ -1,0 +1,39 @@
+---
+
+- name: Install cgroups if this is a worker host
+  yum:
+    name:
+      - libcgroup
+      - libcgroup-tools
+    state: present
+
+- name: deploy /etc/slurm/cgroup.conf
+  template:
+    dest: /etc/slurm/cgroup.conf
+    src: etc/slurm/cgroup.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart_slurm_daemons
+
+- name: enable and start cgroup services if this is a worker_node
+  service:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  with_items:
+    - cgred
+    - cgconfig
+  changed_when: false  # workaround so idempotence CI tests work in a docker container
+
+- name: install slurmd daemon (slurm-slurmd-ohpc rpm)
+  yum:
+    name: slurm-slurmd-ohpc
+    state: installed
+  notify: enable and start slurmd
+
+- name: Enable and start slurmd service
+  service:
+    name: slurmd
+    state: started
+    enabled: true

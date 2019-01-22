@@ -1,0 +1,25 @@
+---
+# handlers file for ansible-role-slurm
+
+- name: restart slurmdbd
+  service:
+    name: slurmdbd
+    state: restarted
+
+- name: restart slurmd
+  service:
+    name: slurmd
+    state: restarted
+  listen: restart_slurm_daemons
+
+- name: restart slurmctld
+  service:
+    name: slurmctld
+    state: restarted
+  listen: restart_slurm_daemons
+
+- name: enable and start slurmd
+  service:
+    name: slurmd
+    state: started
+    enabled: true

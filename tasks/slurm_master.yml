@@ -1,0 +1,20 @@
+---
+
+- name: install master slurm-slurmctld-ohpc rpm from OHPC
+  yum:
+    name: slurm-slurmctld-ohpc
+    state: installed
+  when: slurm_use_ohpc_rpms
+
+- name: install master slurm-slurmctld rpm (NOT OHPC)
+  yum:
+    name: slurm-slurmctld-ohpc
+    state: installed
+  when: not slurm_use_ohpc_rpms
+
+- name: Enable and start slurmctld service
+  service:
+    name: slurmctld
+    state: started
+    enabled: true
+  changed_when: false  # workaround so idempotence CI tests work in a docker container

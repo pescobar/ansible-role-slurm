@@ -1,0 +1,64 @@
+---
+
+# configure slurm accounting daemon
+
+- name: install mariadb-server rpm
+  yum:
+    name: mariadb-server
+    state: installed
+
+- name: Enable and start mariadb server
+  service:
+    name: mariadb
+    state: started
+    enabled: true
+
+- name: install MySQL-python rpm (required by ansible)
+  yum:
+    name: MySQL-python
+    state: installed
+
+- name: create mysql db for accounting
+  mysql_db:
+    name: "{{ slurm_mysql_db }}"
+    state: present
+
+- name: create mysql account for slurm accounting daemon
+  mysql_user:
+    name: "{{ slurm_mysql_user }}"
+    password: "{{ slurm_mysql_password }}"
+    priv: '{{ slurm_mysql_db }}.*:ALL'
+    state: present
+
+- name: install slurm accounting daemon from OpenHPC (slurm-slurmdbd-ohpc rpm)
+  yum:
+    name: slurm-slurmdbd-ohpc
+    state: installed
+  when: slurm_use_ohpc_rpms
+
+- name: install slurm accounting daemon (not OHPC)
+  yum:
+    name: slurm-slurmdbd
+    state: installed
+  when: not slurm_use_ohpc_rpms
+
+- name: deploy slurm accounting config file
+  template:
+    dest: /etc/slurm/slurmdbd.conf
+    src: etc/slurm/slurmdbd.conf.j2
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart slurmdbd
+
+- name: Enable and start slurmdbd
+  service:
+    name: slurmdbd
+    state: started
+    enabled: true
+
+# - name: register the cluster in slurmdbd
+#   command: "sacctmgr add cluster {{ slurm_cluster_name }}"
+#   args:
+#     warn: false
+#   changed_when: false
