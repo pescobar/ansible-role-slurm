@@ -70,6 +70,14 @@
     group: slurm
     mode: 0755
 
+- name: Create folder /var/spool/slurm
+  file:
+    path: /var/spool/slurm
+    state: directory
+    owner: slurm
+    group: slurm
+    mode: 0755
+
 - name: Install slurm accounting daemon if slurm_accounting_host is true
   import_tasks: slurm_accounting.yml
   when: slurm_accounting_host | bool
