@@ -31,7 +31,21 @@
 - name: Install main slurm packages from internal yum repo (NOT OHPC)
   block:
 
-    - name: install slurm rpm if we are NOT using OHPC packages (slurm user is created)
+    - name: Add slurm group
+      group:
+        name: slurm
+        state: present
+        gid: 202
+
+    - name: Add slurm user
+      user:
+        name: slurm
+        state: present
+        system: yes
+        uid: 202
+        group: slurm
+
+    - name: install slurm rpm if we are NOT using OHPC packages
       yum:
         name: slurm
         state: installed
