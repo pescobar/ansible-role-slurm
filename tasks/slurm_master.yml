@@ -8,7 +8,7 @@
 
 - name: install master slurm-slurmctld rpm (NOT OHPC)
   yum:
-    name: slurm-slurmctld-ohpc
+    name: slurm-slurmctld
     state: installed
   when: not slurm_use_ohpc_rpms
 
