@@ -74,6 +74,16 @@
   import_tasks: slurm_accounting.yml
   when: slurm_accounting_host | bool
 
+  # https://github.com/dun/munge/wiki/Installation-Guide#creating-a-secret-key
+- name: Create file /etc/munge/munge.key
+  copy:
+    dest: /etc/munge/munge.key
+    owner: munge
+    group: munge
+    mode: 0400
+    content: |
+      {{ slurm_munge_key }}
+
 - name: Enable and start munge service
   service:
     name: munge

@@ -20,3 +20,5 @@ slurm_mysql_password: password
 slurm_mysql_db: slurm_acct_db
 
 slurm_cluster_name: "{{ hostvars[inventory_hostname].inventory_hostname }}"
+
+slurm_munge_key: baa40f119e26250f7ba1ac0501b7f40aefd94494cd58cbe143f8774a3370edc8cd1dd51d0554707441c3407ba43fc6108dce72c8ae11114c978540965e358b66
