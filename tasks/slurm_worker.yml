@@ -30,7 +30,6 @@
   yum:
     name: slurm-slurmd-ohpc
     state: installed
-  notify: enable and start slurmd
 
 - name: Enable and start slurmd service
   service:

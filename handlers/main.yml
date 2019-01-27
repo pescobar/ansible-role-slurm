@@ -17,9 +17,3 @@
     name: slurmctld
     state: restarted
   listen: restart_slurm_daemons
-
-- name: enable and start slurmd
-  service:
-    name: slurmd
-    state: started
-    enabled: true
