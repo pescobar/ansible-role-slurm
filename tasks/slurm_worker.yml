@@ -30,6 +30,13 @@
   yum:
     name: slurm-slurmd-ohpc
     state: installed
+  when: slurm_use_ohpc_rpms
+
+- name: install slurmd daemon (NOT OHPC)
+  yum:
+    name: slurm-slurmd
+    state: installed
+  when: not slurm_use_ohpc_rpms
 
 - name: Enable and start slurmd service
   service:
