@@ -100,8 +100,8 @@
 
 - name: deploy /etc/slurm/slurm.conf
   template:
+    src: "{{ slurm_conf_template }}"
     dest: /etc/slurm/slurm.conf
-    src: etc/slurm/slurm.conf.j2
     owner: root
     group: root
     mode: 0644
