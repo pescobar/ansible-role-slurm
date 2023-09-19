@@ -1,6 +1,8 @@
 ---
 # defaults file for ansible-role-slurm
 
+# define the template name to allow further customization
+slurm_conf_template: "etc/slurm/slurm.conf.j2"
 # add the public OpenHPC yum repos
 slurm_add_ohpc_repos: true
 
